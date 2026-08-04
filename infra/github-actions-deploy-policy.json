@@ -1,0 +1,61 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "UpdatePhiPortalLambdas",
+      "Effect": "Allow",
+      "Action": [
+        "lambda:UpdateFunctionCode",
+        "lambda:GetFunction",
+        "lambda:GetFunctionConfiguration",
+        "lambda:ListVersionsByFunction"
+      ],
+      "Resource": [
+        "arn:aws:lambda:us-east-1:521495323239:function:listClientDocuments",
+        "arn:aws:lambda:us-east-1:521495323239:function:adminAssignClient",
+        "arn:aws:lambda:us-east-1:521495323239:function:notifyOnStatusChange",
+        "arn:aws:lambda:us-east-1:521495323239:function:adminSetUserEnabled",
+        "arn:aws:lambda:us-east-1:521495323239:function:listMyDocuments",
+        "arn:aws:lambda:us-east-1:521495323239:function:adminDeleteUser",
+        "arn:aws:lambda:us-east-1:521495323239:function:getDownloadUrl",
+        "arn:aws:lambda:us-east-1:521495323239:function:adminResendInvite",
+        "arn:aws:lambda:us-east-1:521495323239:function:adminListAssignments",
+        "arn:aws:lambda:us-east-1:521495323239:function:notifications",
+        "arn:aws:lambda:us-east-1:521495323239:function:adminListUsers",
+        "arn:aws:lambda:us-east-1:521495323239:function:adminCreateUser",
+        "arn:aws:lambda:us-east-1:521495323239:function:updateDocumentStatus",
+        "arn:aws:lambda:us-east-1:521495323239:function:getUploadUrl",
+        "arn:aws:lambda:us-east-1:521495323239:function:getMyClients"
+      ]
+    },
+    {
+      "Sid": "FrontendS3",
+      "Effect": "Allow",
+      "Action": [
+        "s3:ListBucket",
+        "s3:GetBucketLocation"
+      ],
+      "Resource": "arn:aws:s3:::joinabsquare-docs-frontend"
+    },
+    {
+      "Sid": "FrontendS3Objects",
+      "Effect": "Allow",
+      "Action": [
+        "s3:PutObject",
+        "s3:DeleteObject",
+        "s3:GetObject"
+      ],
+      "Resource": "arn:aws:s3:::joinabsquare-docs-frontend/*"
+    },
+    {
+      "Sid": "CloudFrontInvalidate",
+      "Effect": "Allow",
+      "Action": [
+        "cloudfront:CreateInvalidation",
+        "cloudfront:GetInvalidation",
+        "cloudfront:GetDistribution"
+      ],
+      "Resource": "arn:aws:cloudfront::521495323239:distribution/EDV82H3VPZY6F"
+    }
+  ]
+}

@@ -1,0 +1,126 @@
+name: Test and Deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  AWS_REGION: us-east-1
+  FRONTEND_BUCKET: joinabsquare-docs-frontend
+  CLOUDFRONT_DISTRIBUTION_ID: EDV82H3VPZY6F
+  LAMBDA_FUNCTIONS: >-
+    listClientDocuments
+    adminAssignClient
+    notifyOnStatusChange
+    adminSetUserEnabled
+    listMyDocuments
+    adminDeleteUser
+    getDownloadUrl
+    adminResendInvite
+    adminListAssignments
+    notifications
+    adminListUsers
+    adminCreateUser
+    updateDocumentStatus
+    getUploadUrl
+    getMyClients
+
+jobs:
+  test:
+    name: Test backend
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: phi-portal-backend
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: phi-portal-backend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+  deploy:
+    name: Deploy to AWS
+    needs: test
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Package Lambda code
+        run: |
+          set -euo pipefail
+          mkdir -p dist/lambda/handlers dist/lambda/lib
+          cp phi-portal-backend/src/handlers/*.js dist/lambda/handlers/
+          cp phi-portal-backend/src/lib/common.js dist/lambda/lib/
+          (cd dist/lambda && zip -r ../phi-portal-lambdas.zip handlers lib)
+          echo "Package size: $(wc -c < dist/phi-portal-lambdas.zip) bytes"
+          unzip -l dist/phi-portal-lambdas.zip | head -30
+
+      - name: Deploy all Lambda functions
+        run: |
+          set -euo pipefail
+          ZIP="$GITHUB_WORKSPACE/dist/phi-portal-lambdas.zip"
+          for fn in $LAMBDA_FUNCTIONS; do
+            echo "Updating Lambda: $fn"
+            aws lambda update-function-code \
+              --function-name "$fn" \
+              --zip-file "fileb://$ZIP" \
+              --query '{Name:FunctionName,CodeSize:CodeSize,Modified:LastModified}' \
+              --output json
+            # Avoid ResourceConflictException when the next update starts too soon
+            aws lambda wait function-updated --function-name "$fn"
+          done
+
+      - name: Deploy frontend to S3
+        run: |
+          set -euo pipefail
+          aws s3 sync phi-portal-frontend "s3://${FRONTEND_BUCKET}" \
+            --delete \
+            --exclude "*.map" \
+            --exclude ".DS_Store" \
+            --cache-control "public,max-age=300"
+
+      - name: Invalidate CloudFront
+        run: |
+          set -euo pipefail
+          ID=$(aws cloudfront create-invalidation \
+            --distribution-id "$CLOUDFRONT_DISTRIBUTION_ID" \
+            --paths "/*" \
+            --query 'Invalidation.Id' \
+            --output text)
+          echo "CloudFront invalidation: $ID"
+
+      - name: Deployment summary
+        run: |
+          echo "### Deployed successfully" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Frontend: s3://${FRONTEND_BUCKET} → https://docs.joinabsquare.com" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Lambdas: ${LAMBDA_FUNCTIONS}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Commit: ${{ github.sha }}" >> "$GITHUB_STEP_SUMMARY"
