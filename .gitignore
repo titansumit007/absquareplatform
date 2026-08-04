@@ -1,0 +1,8 @@
+node_modules/
+coverage/
+*.zip
+lambda-deploy-zips/
+.cursor/
+*.log
+.DS_Store
+Thumbs.db

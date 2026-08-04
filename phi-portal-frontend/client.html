@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My documents — ABSquare</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/theme.css">
+</head>
+<body>
+  <div class="bg-scene" aria-hidden="true">
+    <canvas id="bg-canvas"></canvas>
+    <div class="bg-texture"></div>
+  </div>
+  <header>
+    <span class="brand">
+      <img class="brand-logo-img" src="images/logo.png" alt="ABSquare — Power of Togetherness">
+    </span>
+    <div class="header-right">
+      <span class="compliance-badge">🔒 HIPAA-compliant</span>
+      <span id="notifBell"><span class="bell-icon">&#128276;</span> <span id="notifCount"></span></span>
+      <button class="secondary" id="logoutBtn">Log out</button>
+    </div>
+  </header>
+  <div id="notifPanel" class="notif-panel hidden"></div>
+
+  <main>
+    <section class="fade-up" style="animation-delay:.05s">
+      <h2>Upload a document</h2>
+      <input type="file" id="fileInput">
+      <button id="uploadBtn">Upload</button>
+      <p style="color:var(--text-dim);font-size:12px;margin-top:8px">
+        Accepted: PDF, Word, Excel, TXT, PNG, JPG, TIFF — up to 25&nbsp;MB. Files are encrypted at rest.
+      </p>
+      <p id="uploadMsg" style="font-size:13px;margin-top:8px"></p>
+    </section>
+
+    <section class="fade-up" style="animation-delay:.15s">
+      <h2>Status</h2>
+      <table id="docsTable">
+        <thead><tr><th>File name</th><th>Status</th><th>Uploaded</th><th>Last updated</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <p id="docsMsg" class="error-text hidden"></p>
+    </section>
+  </main>
+
+  <script src="js/util.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/documents-ui.js"></script>
+  <script src="js/notifications.js"></script>
+  <script src="js/polling.js"></script>
+  <script>
+    if (!Auth.isLoggedIn() || !Auth.getGroups().includes('Clients')) location.href = 'index.html';
+    document.getElementById('logoutBtn').onclick = () => Auth.logout();
+    Notifications.bindBell();
+
+    async function downloadDocument(documentId, btn) {
+      btn.disabled = true;
+      const originalText = btn.textContent;
+      btn.textContent = 'Preparing…';
+      try {
+        const res = await Auth.apiFetch(`/documents/download-url?documentId=${encodeURIComponent(documentId)}`);
+        if (!res || !res.ok) throw new Error('Could not generate a download link.');
+        const data = await res.json();
+        window.open(data.downloadUrl, '_blank', 'noopener');
+      } catch (err) {
+        alert(err.message || 'Download failed. Please try again.');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = originalText;
+      }
+    }
+
+    let previousDocState = new Map();
+
+    async function loadDocuments() {
+      const docsMsg = document.getElementById('docsMsg');
+      docsMsg.classList.add('hidden');
+      try {
+        const res = await Auth.apiFetch('/documents/mine');
+        if (!res || !res.ok) throw new Error('Could not load your documents. Please refresh the page.');
+        const data = await res.json();
+        const tbody = document.querySelector('#docsTable tbody');
+        const isFirstLoad = previousDocState.size === 0 && tbody.children.length === 0;
+        tbody.innerHTML = '';
+        data.documents.forEach((doc, i) => {
+          const prevStatus = previousDocState.get(doc.documentId);
+          const changedSinceLastPoll = prevStatus && prevStatus !== doc.status;
+          const row = document.createElement('tr');
+          row.className = isFirstLoad ? 'stagger-in' : (changedSinceLastPoll ? 'just-updated' : '');
+          if (isFirstLoad) row.style.animationDelay = `${i * 0.04}s`;
+          row.innerHTML = `
+            <td>${Utils.escapeHtml(doc.fileName)}</td>
+            <td>${DocumentsUI.statusPill(doc.status)}</td>
+            <td>${Utils.escapeHtml(Utils.formatDate(doc.uploadedAt))}</td>
+            <td>${Utils.escapeHtml(Utils.formatDate(doc.updatedAt))}</td>
+            <td><button class="link-btn" data-download="${Utils.escapeHtml(doc.documentId)}">Download</button></td>`;
+          tbody.appendChild(row);
+        });
+        previousDocState = new Map(data.documents.map(d => [d.documentId, d.status]));
+        tbody.querySelectorAll('[data-download]').forEach((btn) => {
+          btn.onclick = () => downloadDocument(btn.dataset.download, btn);
+        });
+      } catch (err) {
+        docsMsg.textContent = err.message;
+        docsMsg.classList.remove('hidden');
+      }
+    }
+
+    document.getElementById('uploadBtn').onclick = async () => {
+      const fileInput = document.getElementById('fileInput');
+      const file = fileInput.files[0];
+      const msg = document.getElementById('uploadMsg');
+      msg.className = '';
+      const validationError = Utils.validateUploadFile(file);
+      if (validationError) {
+        msg.textContent = validationError;
+        msg.classList.add('error-text');
+        return;
+      }
+
+      const btn = document.getElementById('uploadBtn');
+      btn.disabled = true;
+      try {
+        msg.textContent = 'Requesting upload URL...';
+        const res = await Auth.apiFetch('/documents/upload-url', {
+          method: 'POST',
+          body: JSON.stringify({ fileName: file.name, contentType: file.type || 'application/octet-stream' }),
+        });
+        if (!res || !res.ok) {
+          const err = res ? await res.json().catch(() => ({})) : {};
+          throw new Error(err.message || 'Could not start the upload.');
+        }
+        const { uploadUrl, uploadFields } = await res.json();
+
+        msg.textContent = 'Uploading...';
+        const formData = new FormData();
+        Object.entries(uploadFields).forEach(([key, value]) => formData.append(key, value));
+        formData.append('file', file);
+
+        const uploadRes = await fetch(uploadUrl, { method: 'POST', body: formData });
+        if (!uploadRes.ok) throw new Error('The file upload itself failed. Please try again.');
+
+        msg.textContent = 'Uploaded.';
+        msg.classList.add('success-text');
+        fileInput.value = '';
+        loadDocuments();
+      } catch (err) {
+        msg.textContent = err.message || 'Upload failed. Please try again.';
+        msg.classList.add('error-text');
+      } finally {
+        btn.disabled = false;
+      }
+    };
+
+    loadDocuments();
+    Notifications.load();
+    Polling.create([loadDocuments, Notifications.load]);
+  </script>
+  <script type="importmap">
+  { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js" } }
+  </script>
+  <script type="module" src="js/bg-scene.js"></script>
+</body>
+</html>

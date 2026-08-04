@@ -1,0 +1,26 @@
+{
+  "name": "phi-portal-backend",
+  "version": "1.1.1",
+  "private": true,
+  "scripts": {
+    "test": "jest --coverage"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "clearMocks": true
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.600.0",
+    "@aws-sdk/lib-dynamodb": "^3.600.0",
+    "@aws-sdk/client-s3": "^3.600.0",
+    "@aws-sdk/s3-request-presigner": "^3.600.0",
+    "@aws-sdk/s3-presigned-post": "^3.600.0",
+    "@aws-sdk/client-sns": "^3.600.0",
+    "@aws-sdk/client-ses": "^3.600.0",
+    "@aws-sdk/client-cognito-identity-provider": "^3.600.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "aws-sdk-client-mock": "^4.0.1"
+  }
+}

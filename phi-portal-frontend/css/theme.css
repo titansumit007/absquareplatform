@@ -1,0 +1,178 @@
+/* Fonts loaded via <link> in HTML for faster first paint */
+
+:root {
+  --bg: #f4f0e6;
+  --bg-card: #fffdf9;
+  --line: #e6ddcc;
+  --line-strong: #d8cbae;
+  --navy: #171b26;
+  --text-dim: #6b6f76;
+  --coral: #e8592e;
+  --coral-light: #fbe3d6;
+  --blue: #2f7fdb;
+  --blue-light: #e7f1fc;
+  --green: #2f9e6b;
+  --amber: #c9820f;
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body: 'Figtree', 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--navy);
+  font-family: var(--font-body);
+  min-height: 100vh;
+}
+
+.bg-scene {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+}
+#bg-canvas {
+  position: absolute; inset: 0; width: 100%; height: 100%; display: block;
+}
+.bg-texture {
+  position: absolute; inset: -10%; pointer-events: none;
+  background:
+    radial-gradient(600px circle at 15% 20%, rgba(232,89,46,0.06), transparent 60%),
+    radial-gradient(700px circle at 85% 75%, rgba(47,127,219,0.06), transparent 60%);
+  animation: bgDrift 30s ease-in-out infinite alternate;
+}
+@keyframes bgDrift {
+  from { transform: translate(0, 0); }
+  to { transform: translate(-1.5%, 1.5%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bg-texture { animation: none; }
+  #bg-canvas { display: none; }
+}
+
+.badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--coral-light); color: var(--coral);
+  font-family: var(--font-mono); font-size: 12px; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase;
+  padding: 7px 16px; border-radius: 20px;
+}
+.badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--coral); animation: pulse 2s ease-in-out infinite; }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+@media (prefers-reduced-motion: reduce) { .badge .dot { animation: none; } }
+
+.brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
+.brand-logo-img { height: 42px; width: auto; display: block; border-radius: 6px; }
+
+.compliance-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--blue-light); color: var(--blue);
+  font-family: var(--font-mono); font-size: 11px; font-weight: 600; letter-spacing: 0.03em;
+  padding: 5px 12px; border-radius: 20px; white-space: nowrap;
+}
+.compliance-strip {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;
+  margin: 18px auto 0; position: relative; z-index: 1;
+}
+
+.link-btn {
+  background: none; border: none; color: var(--blue); font-family: var(--font-body);
+  font-weight: 600; font-size: 13px; cursor: pointer; padding: 4px 0; text-decoration: underline;
+}
+.link-btn:hover { opacity: 0.8; }
+.link-btn:disabled { color: var(--text-dim); cursor: not-allowed; text-decoration: none; }
+
+.error-text { color: #c0392b; font-size: 13px; margin-top: 8px; }
+.success-text { color: var(--green); font-size: 13px; margin-top: 8px; }
+
+button:disabled { opacity: 0.55; cursor: not-allowed; transform: none !important; }
+
+header { position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: center; padding: 18px 32px; border-bottom: 1px solid var(--line); background: rgba(244,240,230,0.85); backdrop-filter: blur(6px); }
+.header-right { display: flex; align-items: center; gap: 18px; }
+
+main { position: relative; z-index: 1; max-width: 960px; margin: 32px auto; padding: 0 20px; }
+section { background: rgba(255,253,249,0.92); border: 1px solid var(--line); border-radius: 16px; padding: 24px; margin-bottom: 20px; backdrop-filter: blur(4px); }
+h2 { font-family: var(--font-display); font-weight: 700; font-size: 19px; margin: 0 0 14px; }
+h3 { font-family: var(--font-body); font-size: 13px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.06em; }
+
+table { width: 100%; border-collapse: collapse; }
+th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--line); font-size: 14px; }
+th { color: var(--text-dim); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
+
+button { padding: 10px 18px; border-radius: 10px; border: 1.5px solid var(--navy); background: var(--navy); color: #fff; font-family: var(--font-body); font-weight: 600; font-size: 14px; cursor: pointer; transition: all .15s ease; }
+button:hover { transform: translateY(-1px); opacity: 0.9; }
+button.secondary { background: transparent; color: var(--blue); border-color: var(--blue); }
+button.secondary:hover { background: var(--blue-light); }
+input, select { padding: 9px 11px; margin: 4px 6px 4px 0; border: 1.5px solid var(--line-strong); border-radius: 10px; background: #fff; color: var(--navy); font-family: var(--font-body); }
+input:focus, select:focus { outline: none; border-color: var(--coral); }
+
+.pill { font-size: 12px; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
+.status-open { background: #fbeee0; color: var(--amber); }
+.status-in_progress { background: var(--blue-light); color: var(--blue); }
+.status-completed { background: #e4f3ea; color: var(--green); }
+
+#notifBell { cursor: pointer; position: relative; font-size: 18px; color: var(--text-dim); transition: color .15s; }
+#notifBell:hover { color: var(--coral); }
+.notif-panel { position: fixed; top: 64px; right: 24px; width: 320px; max-height: 400px; overflow-y: auto; background: var(--bg-card); border: 1px solid var(--line-strong); border-radius: 14px; box-shadow: 0 12px 32px rgba(23,27,38,0.12); padding: 8px; z-index: 20; }
+.notif-panel.hidden { display: none; }
+.notif { padding: 10px; border-bottom: 1px solid var(--line); font-size: 13px; }
+.notif.unread { background: var(--coral-light); }
+.notif .ts { display: block; color: var(--text-dim); font-size: 11px; margin-top: 2px; }
+.hidden { display: none; }
+.admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+@keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+.fade-up { animation: fadeUp .55s cubic-bezier(.2,.8,.2,1) both; }
+
+/* ---- Motion system: bell, panel, row highlighting, tactile buttons ---- */
+
+button:active { transform: scale(.97); }
+
+#notifBell { position: relative; display: inline-flex; align-items: center; transition: transform .2s ease; }
+#notifBell:hover { transform: translateY(-1px); }
+#notifBell .bell-icon { display: inline-block; transform-origin: 50% 20%; }
+#notifBell.ring .bell-icon { animation: bellRing .6s ease; }
+@keyframes bellRing {
+  0%, 100% { transform: rotate(0); }
+  15% { transform: rotate(14deg); }
+  30% { transform: rotate(-12deg); }
+  45% { transform: rotate(8deg); }
+  60% { transform: rotate(-6deg); }
+  75% { transform: rotate(3deg); }
+}
+#notifCount {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 18px; height: 18px; padding: 0 4px; margin-left: 2px;
+  background: var(--coral); color: #fff; font-size: 10px; font-weight: 700;
+  border-radius: 10px; position: relative;
+}
+#notifCount:not(:empty)::after {
+  content: ''; position: absolute; inset: 0; border-radius: 10px;
+  border: 1.5px solid var(--coral); animation: ringPulse 1.8s ease-out infinite;
+}
+@keyframes ringPulse { 0% { transform: scale(1); opacity: .7; } 100% { transform: scale(1.9); opacity: 0; } }
+
+.notif-panel {
+  transform-origin: top right;
+  transition: opacity .18s ease, transform .18s ease;
+  opacity: 1; transform: scale(1) translateY(0);
+}
+.notif-panel.hidden { display: block; opacity: 0; transform: scale(.96) translateY(-6px); pointer-events: none; }
+.notif { transition: background-color .3s ease; }
+
+/* Applied for a few seconds via JS when a document's status just changed,
+   so the person's eye is drawn to exactly what updated instead of having
+   to spot it in a static table themselves. */
+@keyframes rowFlash {
+  0% { background-color: var(--coral-light); }
+  100% { background-color: transparent; }
+}
+tr.just-updated { animation: rowFlash 2.4s ease-out; }
+.pill { transition: background-color .3s ease, color .3s ease; }
+
+.stagger-in { opacity: 0; animation: fadeUp .4s cubic-bezier(.2,.8,.2,1) forwards; }
+
+@media (prefers-reduced-motion: reduce) {
+  #notifBell.ring .bell-icon { animation: none; }
+  #notifCount:not(:empty)::after { animation: none; }
+  tr.just-updated { animation: none; background-color: var(--coral-light); }
+  .stagger-in { animation: none; opacity: 1; }
+}
