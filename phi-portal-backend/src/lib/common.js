@@ -177,6 +177,68 @@ async function hasClientAccess(claims, clientId, accessTable) {
   return !!res.Item;
 }
 
+// ---------------------------------------------------------------------------
+// Retention + activity footprints
+// ---------------------------------------------------------------------------
+
+const RETENTION_DAYS = 30;
+const MAX_ACTIVITY_ENTRIES = 40;
+
+function retentionTimestamps(fromDate = new Date()) {
+  const uploadedAt = fromDate.toISOString();
+  const expires = new Date(fromDate.getTime() + RETENTION_DAYS * 24 * 60 * 60 * 1000);
+  return {
+    uploadedAt,
+    expiresAt: expires.toISOString(),
+    // DynamoDB TTL (epoch seconds). Enable TTL on the Documents table attribute "ttl".
+    ttl: Math.floor(expires.getTime() / 1000),
+  };
+}
+
+function isExpired(doc) {
+  if (!doc) return false;
+  if (doc.expiresAt) return Date.parse(doc.expiresAt) <= Date.now();
+  if (doc.uploadedAt) {
+    const uploaded = Date.parse(doc.uploadedAt);
+    if (!Number.isNaN(uploaded)) {
+      return uploaded + RETENTION_DAYS * 24 * 60 * 60 * 1000 <= Date.now();
+    }
+  }
+  return false;
+}
+
+function buildActivityEntry(claims, action, detail) {
+  return {
+    at: new Date().toISOString(),
+    action,
+    bySub: claims.sub,
+    byEmail: claims.email || null,
+    detail: detail || null,
+  };
+}
+
+function nextActivityLog(existingLog, entry) {
+  const prev = Array.isArray(existingLog) ? existingLog : [];
+  return [...prev, entry].slice(-MAX_ACTIVITY_ENTRIES);
+}
+
+function publicDocument(doc) {
+  if (!doc) return null;
+  return {
+    clientId: doc.clientId,
+    documentId: doc.documentId,
+    fileName: doc.fileName,
+    contentType: doc.contentType,
+    status: doc.status,
+    uploadedAt: doc.uploadedAt,
+    updatedAt: doc.updatedAt,
+    updatedBy: doc.updatedBy,
+    expiresAt: doc.expiresAt || null,
+    retentionDays: RETENTION_DAYS,
+    activityLog: Array.isArray(doc.activityLog) ? doc.activityLog : [],
+  };
+}
+
 module.exports = {
   ddb,
   getClaims,
@@ -196,4 +258,10 @@ module.exports = {
   isAllowedUpload,
   ALLOWED_CONTENT_TYPES,
   MAX_UPLOAD_BYTES,
+  RETENTION_DAYS,
+  retentionTimestamps,
+  isExpired,
+  buildActivityEntry,
+  nextActivityLog,
+  publicDocument,
 };

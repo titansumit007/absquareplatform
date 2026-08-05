@@ -31,10 +31,7 @@
 </style>
 </head>
 <body>
-  <div class="bg-scene" aria-hidden="true">
-    <canvas id="bg-canvas"></canvas>
-    <div class="bg-texture"></div>
-  </div>
+  <div class="bg-scene" aria-hidden="true"><div class="bg-texture"></div></div>
   <div class="landing">
     <div class="topbar">
       <span class="brand">
@@ -50,6 +47,7 @@
         <span class="compliance-badge">🔒 HIPAA-compliant</span>
         <span class="compliance-badge">🔐 Encrypted document exchange</span>
         <span class="compliance-badge">🧾 Every access logged</span>
+        <span class="compliance-badge">⏳ 30-day retention</span>
       </div>
     </div>
 
@@ -86,9 +84,5 @@
     document.getElementById('customerPanel').onclick = (e) => { if (e.target.tagName !== 'BUTTON') document.getElementById('customerBtn').click(); };
     document.getElementById('staffPanel').onclick = (e) => { if (e.target.tagName !== 'BUTTON') document.getElementById('staffBtn').click(); };
   </script>
-  <script type="importmap">
-  { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js" } }
-  </script>
-  <script type="module" src="js/bg-scene.js"></script>
 </body>
 </html>

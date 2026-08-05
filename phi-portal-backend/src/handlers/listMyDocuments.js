@@ -1,5 +1,7 @@
 const { QueryCommand } = require('@aws-sdk/lib-dynamodb');
-const { ddb, getClaims, isInGroup, json, forbidden, withErrorHandling } = require('../lib/common');
+const {
+  ddb, getClaims, isInGroup, json, forbidden, withErrorHandling, isExpired, publicDocument, RETENTION_DAYS,
+} = require('../lib/common');
 
 const DOCS_TABLE = process.env.DOCUMENTS_TABLE;
 
@@ -14,5 +16,9 @@ exports.handler = withErrorHandling(async (event) => {
     ScanIndexForward: false,
   }));
 
-  return json(200, { documents: result.Items || [] });
+  const documents = (result.Items || [])
+    .filter((doc) => !isExpired(doc))
+    .map(publicDocument);
+
+  return json(200, { documents, retentionDays: RETENTION_DAYS });
 });

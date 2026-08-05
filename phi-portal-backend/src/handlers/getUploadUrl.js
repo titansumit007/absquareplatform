@@ -5,6 +5,7 @@ const { randomUUID } = require('crypto');
 const {
   ddb, getClaims, isInGroup, json, badRequest, forbidden, withErrorHandling, parseJsonBody,
   sanitizeFileName, isAllowedUpload, ALLOWED_CONTENT_TYPES, MAX_UPLOAD_BYTES,
+  retentionTimestamps, RETENTION_DAYS, buildActivityEntry,
 } = require('../lib/common');
 
 const s3 = new S3Client({});
@@ -51,7 +52,10 @@ exports.handler = withErrorHandling(async (event) => {
     Expires: 300, // seconds
   });
 
-  const now = new Date().toISOString();
+  const now = new Date();
+  const { uploadedAt, expiresAt, ttl } = retentionTimestamps(now);
+  const uploadEntry = buildActivityEntry(claims, 'upload', 'Document uploaded');
+
   await ddb.send(new PutCommand({
     TableName: DOCS_TABLE,
     Item: {
@@ -61,14 +65,24 @@ exports.handler = withErrorHandling(async (event) => {
       s3Key,
       contentType,
       status: 'open',
-      uploadedAt: now,
-      updatedAt: now,
+      uploadedAt,
+      updatedAt: uploadedAt,
+      expiresAt,
+      ttl,
       uploadedBy: clientId,
-      // Captured from the verified ID token now, so the status-change email
-      // step never needs to look this up again later.
       clientEmail: claims.email,
+      activityLog: [uploadEntry],
+      retentionDays: RETENTION_DAYS,
     },
   }));
 
-  return json(200, { documentId, uploadUrl: url, uploadFields: fields, s3Key, maxUploadBytes: MAX_UPLOAD_BYTES });
+  return json(200, {
+    documentId,
+    uploadUrl: url,
+    uploadFields: fields,
+    s3Key,
+    maxUploadBytes: MAX_UPLOAD_BYTES,
+    expiresAt,
+    retentionDays: RETENTION_DAYS,
+  });
 });
