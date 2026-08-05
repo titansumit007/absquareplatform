@@ -3,26 +3,31 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Signing in...</title>
+<title>Signing in — AB Square Secure Sandbox</title>
+<link rel="icon" type="image/svg+xml" href="images/logo-mark.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,650;0,9..144,750;1,9..144,500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/theme.css">
 <style>
   .center { position: relative; z-index: 1; max-width: 420px; margin: 120px auto; text-align: center; }
-  .spinner { width: 34px; height: 34px; border-radius: 50%; border: 3px solid var(--line-strong); border-top-color: var(--coral); margin: 0 auto 18px; animation: spin .8s linear infinite; }
+  .spinner { width: 34px; height: 34px; border-radius: 50%; border: 3px solid var(--line-strong); border-top-color: var(--orange); margin: 0 auto 18px; animation: spin .8s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
   @media (prefers-reduced-motion: reduce) { .spinner { animation: none; } }
   #msg { color: var(--text-dim); font-size: 15px; }
-  #msg a { color: var(--blue); font-weight: 600; text-decoration: none; }
+  #msg a { color: var(--cyan); font-weight: 700; text-decoration: none; }
 </style>
 </head>
 <body>
   <div class="bg-scene" aria-hidden="true"><div class="bg-texture"></div></div>
   <div class="center">
-    <span class="brand" style="justify-content:center;margin-bottom:24px">
-      <img class="brand-logo-img" src="images/logo.png" alt="ABSquare — Power of Togetherness">
-    </span>
+    <a class="brand brand-lockup" href="index.html" style="justify-content:center;margin-bottom:24px" aria-label="AB Square Secure Sandbox">
+      <img class="brand-logo-img" src="images/logo-mark.svg" alt="">
+      <span class="brand-text" style="text-align:left">
+        <span class="name"><span class="brand-ab">AB</span><span class="brand-square">SQUARE</span></span>
+        <span class="tag">Secure Sandbox</span>
+      </span>
+    </a>
     <div class="spinner"></div>
     <p id="msg">Signing you in...</p>
   </div>
@@ -36,11 +41,11 @@
       const isStaff = groups.includes('CompanyUsers') || groups.includes('Admins');
 
       if (intended === 'customer' && !isClient && isStaff) {
-        document.getElementById('msg').innerHTML = 'This login belongs to an ABSquare user account, not a customer account.<br><a href="company.html">Continue to the ABSquare dashboard &rarr;</a>';
+        document.getElementById('msg').innerHTML = 'This login belongs to an AB Square user account, not a customer account.<br><a href="company.html">Continue to the AB Square dashboard &rarr;</a>';
         return;
       }
       if (intended === 'staff' && !isStaff && isClient) {
-        document.getElementById('msg').innerHTML = 'This login belongs to a customer account, not an ABSquare user account.<br><a href="client.html">Continue to your document dashboard &rarr;</a>';
+        document.getElementById('msg').innerHTML = 'This login belongs to a customer account, not an AB Square user account.<br><a href="client.html">Continue to your document dashboard &rarr;</a>';
         return;
       }
 

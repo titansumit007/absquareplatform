@@ -31,7 +31,7 @@ const DocumentsUI = (() => {
           <strong>30-day document retention</strong>
           <p>
             Documents are kept for <b>30 days</b> from upload, then automatically deleted.
-            After that they are unavailable to clients and ABSquare users. Download anything you need to keep before the expiry date.
+            After that they are unavailable to clients and AB Square users. Download anything you need to keep before the expiry date.
           </p>
         </div>
       </div>`;

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="AB Square Secure Sandbox">
+  <!-- Concept B mark: navy tile + orange/cyan shield vault -->
+  <rect width="128" height="128" rx="26" fill="#071426"/>
+  <path d="M64 20c-1.4 0-2.7.4-3.8 1.1L33 37.5c-2.4 1.4-3.9 3.9-3.9 6.7v23.2c0 19.8 13.2 38.1 33.8 45.9 1.5.6 3.1.6 4.6 0 20.6-7.8 33.8-26.1 33.8-45.9V44.2c0-2.8-1.5-5.3-3.9-6.7L67.8 21.1C66.7 20.4 65.4 20 64 20z"
+        fill="none" stroke="#F04419" stroke-width="6.5" stroke-linejoin="round"/>
+  <path d="M64 28 L90 43.5 V66.8c0 14.8-9.4 28.5-26 35.1C47.4 95.3 38 81.6 38 66.8V43.5L64 28z"
+        fill="none" stroke="#00A8D8" stroke-width="3.5" stroke-linejoin="round" opacity="0.95"/>
+  <rect x="48" y="54" width="32" height="26" rx="5" fill="none" stroke="#FFF8F2" stroke-width="4"/>
+  <path d="M57 54v-4.5a7 7 0 0 1 14 0V54" fill="none" stroke="#FFF8F2" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="64" cy="66" r="3.2" fill="#F04419"/>
+</svg>

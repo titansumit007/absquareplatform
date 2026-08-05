@@ -3,50 +3,58 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Absquare document portal</title>
+<title>AB Square Secure Sandbox</title>
+<link rel="icon" type="image/svg+xml" href="images/logo-mark.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,650;0,9..144,750;1,9..144,500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/theme.css">
 <style>
   .landing { position: relative; min-height: 100vh; display: flex; flex-direction: column; }
   .topbar { position: relative; z-index: 1; padding: 26px 40px 0; }
-  .hero { position: relative; z-index: 1; text-align: center; padding: 48px 20px 6px; }
-  .hero h1 { font-family: var(--font-display); font-weight: 800; font-size: clamp(30px, 5vw, 48px); line-height: 1.12; margin: 20px 0 16px; letter-spacing: -0.01em; }
-  .hero h1 em { color: var(--coral); font-style: italic; font-weight: 700; }
-  .hero p { color: var(--text-dim); font-size: 16px; max-width: 520px; margin: 0 auto; line-height: 1.6; }
-  .split { position: relative; z-index: 1; flex: 1; display: flex; align-items: stretch; justify-content: center; gap: 24px; max-width: 900px; margin: 44px auto; padding: 0 20px; }
-  .panel { flex: 1; max-width: 380px; background: rgba(255,253,249,0.92); border: 1px solid var(--line); border-radius: 18px; padding: 36px 28px; text-align: center; cursor: pointer; transition: transform .2s ease, box-shadow .2s ease; opacity: 0; backdrop-filter: blur(4px); }
-  .panel:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(23,27,38,0.08); }
+  .hero { position: relative; z-index: 1; text-align: center; padding: 36px 20px 6px; }
+  .hero h1 { font-family: var(--font-display); font-weight: 700; font-size: clamp(26px, 4vw, 40px); line-height: 1.15; margin: 18px auto 12px; letter-spacing: -0.02em; color: var(--navy); max-width: 640px; }
+  .hero h1 em { font-style: italic; color: var(--orange); }
+  .hero p { color: rgba(19, 50, 74, 0.72); font-size: 16px; max-width: 520px; margin: 0 auto; line-height: 1.6; }
+  .split { position: relative; z-index: 1; flex: 1; display: flex; align-items: stretch; justify-content: center; gap: 24px; max-width: 900px; margin: 40px auto; padding: 0 20px; }
+  .panel { flex: 1; max-width: 380px; background: rgba(255,255,255,0.72); border: 1px solid var(--line); border-radius: var(--radius); padding: 36px 28px; text-align: center; cursor: pointer; transition: transform .2s ease, box-shadow .2s ease; opacity: 0; box-shadow: var(--shadow); backdrop-filter: blur(8px); }
+  .panel:hover { transform: translateY(-6px); box-shadow: var(--shadow-strong); }
   .panel .icon { width: 56px; height: 56px; border-radius: 14px; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
   .panel-customer .icon { background: var(--coral-light); }
   .panel-staff .icon { background: var(--blue-light); }
-  .panel h3 { font-family: var(--font-display); font-size: 19px; font-weight: 700; color: var(--navy); text-transform: none; letter-spacing: 0; margin: 0 0 8px; }
+  .panel h3 { font-family: var(--font-display); font-size: 22px; font-weight: 700; color: var(--navy); text-transform: none; letter-spacing: 0; margin: 0 0 8px; }
   .panel p { color: var(--text-dim); font-size: 14px; margin: 0 0 22px; line-height: 1.6; }
   .panel button { width: 100%; padding: 13px; font-size: 14.5px; }
   .divider { width: 40px; display: flex; align-items: center; justify-content: center; }
   .divider .line { width: 1px; height: 100%; background: var(--line-strong); }
-  .foot { position: relative; z-index: 1; text-align: center; padding: 22px; color: var(--text-dim); font-size: 12px; font-family: var(--font-mono); }
-  @media (max-width: 640px) { .split { flex-direction: column; gap: 20px; } .divider { display: none; } }
+  .foot { position: relative; z-index: 1; text-align: center; padding: 22px; color: var(--text-dim); font-size: 12px; letter-spacing: 0.04em; }
+  @media (max-width: 640px) { .split { flex-direction: column; gap: 20px; } .divider { display: none; } .topbar { padding: 20px 20px 0; } }
 </style>
 </head>
 <body>
   <div class="bg-scene" aria-hidden="true"><div class="bg-texture"></div></div>
   <div class="landing">
     <div class="topbar">
-      <span class="brand">
-        <img class="brand-logo-img" src="images/logo.png" alt="ABSquare — Power of Togetherness">
-      </span>
+      <a class="brand brand-lockup" href="index.html" aria-label="AB Square Secure Sandbox">
+        <img class="brand-logo-img" src="images/logo-mark.svg" alt="">
+        <span class="brand-text">
+          <span class="name"><span class="brand-ab">AB</span><span class="brand-square">SQUARE</span></span>
+          <span class="tag">Secure Sandbox</span>
+        </span>
+      </a>
     </div>
 
     <div class="hero">
-      <span class="badge"><span class="dot"></span>Secure document portal</span>
-      <h1>One portal.<br>Two secure <em>doors</em>.</h1>
-      <p>Choose the door that matches who you are — your documents and dashboard stay in a separate lane either way.</p>
+      <div class="brand-hero fade-up">
+        <img class="mark" src="images/logo-mark.svg" alt="">
+        <p class="product"><span class="brand-ab">AB</span><span class="brand-square">SQUARE</span> Secure Sandbox</p>
+      </div>
+      <h1>Encrypted document exchange inside a <em>secure vault</em>.</h1>
+      <p>Choose your door — clients and AB Square staff stay in separate, access-logged lanes with a 30-day retention policy.</p>
       <div class="compliance-strip">
         <span class="compliance-badge">🔒 HIPAA-compliant</span>
-        <span class="compliance-badge">🔐 Encrypted document exchange</span>
-        <span class="compliance-badge">🧾 Every access logged</span>
+        <span class="compliance-badge">🔐 Encrypted at rest</span>
+        <span class="compliance-badge">🧾 Access footprints</span>
         <span class="compliance-badge">⏳ 30-day retention</span>
       </div>
     </div>
@@ -55,7 +63,7 @@
       <div class="panel panel-customer fade-up" id="customerPanel" style="animation-delay:.05s">
         <div class="icon">&#128274;</div>
         <h3>Login as customer</h3>
-        <p>Upload your documents and track their status in real time.</p>
+        <p>Upload documents and track status inside the secure sandbox.</p>
         <button id="customerBtn">Continue as customer &rarr;</button>
       </div>
 
@@ -63,13 +71,13 @@
 
       <div class="panel panel-staff fade-up" id="staffPanel" style="animation-delay:.15s">
         <div class="icon">&#9881;</div>
-        <h3>Login as ABSquare user</h3>
-        <p>Review client documents, update statuses, and manage access.</p>
-        <button class="secondary" id="staffBtn">Continue as ABSquare user &rarr;</button>
+        <h3>Login as AB Square user</h3>
+        <p>Review client files, update status, and manage sandbox access.</p>
+        <button class="secondary" id="staffBtn">Continue as AB Square user &rarr;</button>
       </div>
     </div>
 
-    <div class="foot">docs.joinabsquare.com &middot; HIPAA-compliant &middot; every access is logged</div>
+    <div class="foot">ABSQUARE Secure Sandbox &middot; docs.joinabsquare.com &middot; every access is logged</div>
   </div>
 
   <script src="js/auth.js"></script>
