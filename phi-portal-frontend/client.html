@@ -39,14 +39,14 @@
       <p class="section-sub">Preview files in the panel, download a copy, and review who accessed them.</p>
       <div class="docs-layout">
         <div>
-          <table id="docsTable">
+          <table id="docsTable" class="docs-table client-docs">
             <thead>
               <tr>
-                <th>File name</th>
-                <th>Status</th>
-                <th>Uploaded</th>
-                <th>Retention</th>
-                <th>Actions</th>
+                <th class="col-file">File name</th>
+                <th class="col-status">Status</th>
+                <th class="col-uploaded">Uploaded</th>
+                <th class="col-retention">Retention</th>
+                <th class="col-actions">Actions</th>
               </tr>
             </thead>
             <tbody></tbody>
@@ -128,11 +128,11 @@
           row.className = isFirstLoad ? 'stagger-in' : (changedSinceLastPoll ? 'just-updated' : '');
           if (isFirstLoad) row.style.animationDelay = `${i * 0.04}s`;
           row.innerHTML = `
-            <td>${Utils.escapeHtml(doc.fileName)}</td>
-            <td>${DocumentsUI.statusPill(doc.status)}</td>
-            <td>${Utils.escapeHtml(Utils.formatDate(doc.uploadedAt))}</td>
-            <td>${DocumentsUI.expiresLabel(doc)}</td>
-            <td class="row-actions">
+            <td class="col-file" title="${Utils.escapeHtml(doc.fileName)}">${Utils.escapeHtml(doc.fileName)}</td>
+            <td class="col-status">${DocumentsUI.statusPill(doc.status)}</td>
+            <td class="col-uploaded">${Utils.escapeHtml(Utils.formatDate(doc.uploadedAt))}</td>
+            <td class="col-retention">${DocumentsUI.expiresLabel(doc)}</td>
+            <td class="col-actions row-actions">
               <button class="link-btn" data-preview="${Utils.escapeHtml(doc.documentId)}">Preview</button>
               <button class="link-btn" data-download="${Utils.escapeHtml(doc.documentId)}">Download</button>
             </td>`;

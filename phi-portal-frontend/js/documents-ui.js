@@ -75,10 +75,17 @@ const DocumentsUI = (() => {
     if (closeBtn) closeBtn.onclick = closePreview;
   }
 
+  function setPreviewLayout(open) {
+    document.querySelectorAll('.docs-layout').forEach((el) => {
+      el.classList.toggle('has-preview', open);
+    });
+  }
+
   function closePreview() {
     activeDoc = null;
     const panel = document.getElementById('previewPanel');
     if (panel) panel.classList.add('hidden');
+    setPreviewLayout(false);
   }
 
   function renderActivity(log) {
@@ -95,7 +102,7 @@ const DocumentsUI = (() => {
 
     activeDoc = doc;
     panel.classList.remove('hidden');
-    if (title) title.textContent = doc.fileName || 'Document';
+    setPreviewLayout(true);    if (title) title.textContent = doc.fileName || 'Document';
     if (meta) {
       meta.innerHTML = `${statusPill(doc.status)} ${expiresLabel(doc)}`;
     }
